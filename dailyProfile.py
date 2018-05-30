@@ -16,7 +16,11 @@ def evaluate(purposes):
     score = (score / itermFullScore) * purpose.weight
     aggregateScore += score
     fullScore += purpose.weight
-  return aggregateScore / fullScore
+
+  averageScore = aggregateScore / fullScore
+  fa = open("data.txt","a")
+  fa.write("\n"+now.strftime("%Y-%m-%d")+","+str(averageScore))
+  return averageScore
 
 
 def validaScore(score):
