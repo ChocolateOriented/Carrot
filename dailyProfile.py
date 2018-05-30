@@ -21,7 +21,7 @@ def evaluate(purposes):
 
 def validaScore(score):
   if (score < 0 or score > itermFullScore):
-    validaScore(int(input("请输入有效分数:")))
+    return validaScore(int(input("请输入有效分数:")))
   else:
     return score
 
