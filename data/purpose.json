@@ -1,0 +1,73 @@
+[
+  {
+    "name": "英语",
+    "weight": 2,
+    "status": "progress",
+    "plan":[
+      {
+        "type": "workday",
+        "time": "早通勤"
+      },
+      {
+        "type": "holiday",
+        "time": "早饭后"
+      }
+    ]
+  },
+  {
+    "name": "机器学习",
+    "weight": 4,
+    "status": "progress",
+    "plan":[
+      {
+        "type": "workday",
+        "time": "上班"
+      }
+    ]
+  },
+  {
+    "name": "锻炼",
+    "weight": 2,
+    "status": "progress",
+    "plan":[
+      {
+        "type": "workday",
+        "time": "晚饭前后"
+      },
+      {
+        "type": "holiday",
+        "time": "英语后"
+      }
+    ]
+  },
+  {
+    "name": "自由学习",
+    "weight": 2,
+    "status": "progress",
+    "plan":[
+      {
+        "type": "workday",
+        "time": "晚通勤+其他"
+      },
+      {
+        "type": "holiday",
+        "time": "锻炼后, 每周末整理笔记"
+      }
+    ]
+  },
+  {
+    "name": "按时睡觉",
+    "weight": 2,
+    "status": "progress",
+    "plan":[
+      {
+        "type": "workday",
+        "time": "11:30左右"
+      },
+      {
+        "type": "holiday",
+        "time": "11:30左右"
+      }
+    ]
+  }
+]

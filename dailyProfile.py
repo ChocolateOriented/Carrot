@@ -1,5 +1,5 @@
-from plan import *
 import datetime
+import json
 
 # 设计思路, 怎么好用怎么来, 尽可能符合实际需求
 
@@ -10,16 +10,28 @@ def evaluate(purposes):
   print("各项满分" + str(itermFullScore) + ", 请对自己做出评价\n")
   aggregateScore = 0;
   fullScore = 0;
+
+  record = {"日期":datetime.datetime.now().strftime("%Y-%m-%d")};
   for purpose in purposes:
-    score = int(input(purpose.name + ":"))
+    name = purpose["name"]
+    weight = purpose["weight"]
+    score = int(input(name + ":"))
     score = validaScore(score)
-    score = (score / itermFullScore) * purpose.weight
+
+    record[name] = score
+    score = (score / itermFullScore) * weight
     aggregateScore += score
-    fullScore += purpose.weight
+    fullScore += weight
 
   averageScore = aggregateScore / fullScore
-  fa = open("data.txt","a")
-  fa.write("\n"+now.strftime("%Y-%m-%d")+","+str(averageScore))
+  record["总分"] = averageScore
+  # 记录评分
+  awardUrl = "data/record.json"
+  with open(awardUrl,"r",encoding="utf-8") as recordFr:
+    records = json.load(recordFr)
+    records.append(record)
+    with open(awardUrl,"w",encoding="utf-8") as recordFw:
+      json.dump(records,recordFw,indent=2,ensure_ascii=False)
   return averageScore
 
 
@@ -29,35 +41,52 @@ def validaScore(score):
   else:
     return score
 
+def getPurposeByType (allPurpose, type):
+  todayPurpose = []
+  for purpose in allPurpose:
+    plans = purpose["plan"]
+    for plan in plans:
+      if (plan["type"] == type):
+        todayPurpose.append(purpose)
+  return todayPurpose
 
-print("怠惰时要有按计划行动的执行力，不要被本能支配, 增加自我奖惩机制, 秉承先完成目标, 后接受惩罚, 最后获取奖励")
+print("培养执行力，不要被本能支配, 增加自我奖惩机制")
 print("机制说明:")
-print("  1. 难以停下的东西作为激励(游戏, 视频等娱乐), 对难以开始的事情做激励")
-print("  2. 按事情重要程度加权算分, 总分作为百分比获得娱乐时间, 完成目标, 或满意即可满分")
-print("  3. 按评分计算娱乐时间, 空余时间用于补足失分项\n")
+print("  1. 按事情重要程度加权算分, 总分作为百分比获得娱乐时间, 完成目标, 或满意即可满分")
+print("  2. 奖励40/天冲动消费, 完成85%即可获取全部, 未达到60%则无奖励\n")
 
 now = datetime.datetime.now()
+purposeUrl = "data/purpose.json"
 
-todayPurpose = []
+with open(purposeUrl, 'r',encoding="utf-8") as purposeF:
+  allPurpose = json.load(purposeF)
+
 # 工作日
 if (now.isoweekday()):
-  todayPurpose.append(Purpose("英语", "早上", 20, "单词及新闻"))
-  todayPurpose.append(Purpose("机器学习或工作", "下午", 40))
-  todayPurpose.append(Purpose("锻炼", "晚饭前", 20))
-  todayPurpose.append(Purpose("自由学习", "地铁晚饭后", 10))
-  todayPurpose.append(Purpose("睡觉", "11:30左右", 10))
-  award = Award("娱乐", 150, datetime.datetime(day=now.day, month=now.month,
-                                             year=now.year, hour=21))
+  planType = "workday"
 else:  # 周末
-  todayPurpose.append(Purpose("英语", "早饭后", 20))
-  todayPurpose.append(Purpose("锻炼", "英语后", 20))
-  todayPurpose.append(Purpose("自由学习", "锻炼后至1:30", 40))
-  todayPurpose.append(Purpose("按时睡觉", "12点前", 20))
-  award = Award("娱乐", 600,datetime.datetime(day=now.day, month=now.month,
-                                            year=now.year, hour=13, minute=30))
+  planType = "holiday"
+
+todayPurpose = getPurposeByType(allPurpose,planType)
 score = evaluate(todayPurpose)
-punish = int(award.amount * (1 - score))
-print("\n得分"+str(score)+", 需减少" + award.name + str(punish)+"分钟, 请补足失分项至"+ (
-  award.startTime +
-      datetime.timedelta(minutes=punish)).strftime("%H:%M") )
+floor = 0.6
+ceiling = 0.85
+
+print("\n得分"+str(score))
+if (score<floor):
+  input(", 低于"+str(floor)+"无奖励")
+elif (score<ceiling):
+  incrementalAward = int(score*40)
+else:
+  incrementalAward = 40
+print("获得奖励"+str(incrementalAward))
+
+awardUrl = "data/award.json"
+with open(awardUrl,"r",encoding="utf-8") as awardFr:
+  previousAward = int(json.load(awardFr))
+  currentAward = previousAward + incrementalAward
+  with open(awardUrl,"w",encoding="utf-8") as awardFw:
+    json.dump(currentAward, awardFw)
+
+input("奖励从"+str(previousAward)+"增加至"+str(currentAward))
 
