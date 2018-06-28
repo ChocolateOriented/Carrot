@@ -53,7 +53,8 @@ def getPurposeByType (allPurpose, type):
 print("培养执行力，不要被本能支配, 增加自我奖惩机制")
 print("机制说明:")
 print("  1. 按事情重要程度加权算分, 总分作为百分比获得娱乐时间, 完成目标, 或满意即可满分")
-print("  2. 奖励40/天冲动消费, 完成85%即可获取全部, 未达到60%则无奖励\n")
+print("  2. 奖励40/天冲动消费, 完成85%即可获取全部, 未达到60%则无奖励")
+print("  3. 每日对前一天做出记录\n")
 
 now = datetime.datetime.now()
 purposeUrl = "data/purpose.json"
